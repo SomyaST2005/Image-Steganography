@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steganography Web App</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Image Steganography</h1>
+        
+        <!-- Encoding Section -->
+        <section id="encoding-section">
+            <h2>Encode Message</h2>
+            <form id="encode-form" enctype="multipart/form-data">
+                <label for="image">Select Image:</label>
+                <input type="file" id="image" name="image" accept="image/*" required>
+                
+                <label for="message">Message to Encode:</label>
+                <textarea id="message" name="message" placeholder="Enter your message here..." required></textarea>
+                
+                <button type="submit">Encode Message</button>
+            </form>
+            <div id="download-link" style="display: none;">
+                <a id="encoded-download" href="#" download>Download Encoded Image</a>
+            </div>
+        </section>
+
+        <!-- Decoding Section -->
+        <section id="decoding-section">
+            <h2>Decode Message</h2>
+            <form id="decode-form" enctype="multipart/form-data">
+                <label for="decode-image">Select Encoded Image:</label>
+                <input type="file" id="decode-image" name="decode-image" accept="image/*" required>
+                
+                <label for="message-length">Message Length (approx.):</label>
+                <input type="number" id="message-length" name="message-length" placeholder="Length of original message" required>
+                
+                <button type="submit">Decode Message</button>
+            </form>
+            <div id="decoded-message" style="display: none;">
+                <h3>Decoded Message:</h3>
+                <p id="message-output"></p>
+            </div>
+        </section>
+    </div>
+    <script src="/static/scripts.js"></script>
+</body>
+</html>
