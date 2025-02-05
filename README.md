@@ -1,4 +1,6 @@
-![image](https://github.com/user-attachments/assets/4cf3fe04-b912-490a-81d0-37101d1c5780)# Image Steganography System
+# Image Steganography System
+
+![Steganography Web App - Google Chrome 05-02-2025 11_28_32](https://github.com/user-attachments/assets/0b6a2638-6ad9-4fc7-9250-80adbdbacdbf)
 
 ## Introduction
 The Image Steganography System is a secure and efficient application designed to embed secret messages into digital images. This project employs three key techniques:
@@ -7,8 +9,6 @@ The Image Steganography System is a secure and efficient application designed to
 3. **Least Significant Bit (LSB) Encoding** for embedding data into the image.
 
 The system ensures minimal distortion of the cover image and is resistant to detection. It provides a scalable framework for covert communication with applications in secure messaging, digital watermarking, and intellectual property protection.
-
-![Steganography Web App - Google Chrome 05-02-2025 11_28_32](https://github.com/user-attachments/assets/0b6a2638-6ad9-4fc7-9250-80adbdbacdbf)
 
 ---
 
