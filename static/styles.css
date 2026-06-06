@@ -284,7 +284,11 @@ body {
 
 /* --- Panel Visibility --- */
 .panel { display: block; }
-.panel[hidden] { display: none; }
+.panel[hidden],
+.error-box[hidden],
+.file-preview[hidden] {
+    display: none !important;
+}
 
 /* --- Form Group --- */
 .form-group {
