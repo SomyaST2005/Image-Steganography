@@ -1,1 +1,7 @@
 app.log
+__pycache__/
+*.pyc
+uploads/
+venv/
+.env
+encoded/encoded_image.png

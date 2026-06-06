@@ -3,6 +3,7 @@ from PIL import Image
 import numpy as np
 import logging
 import os
+import tempfile
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +48,7 @@ def lsb_encode(image_path, binary_message, message_length):
         # Reshape and save
         img_array = flat_image.reshape(img_array.shape)
         encoded_image = Image.fromarray(img_array)
-        output_path = 'encoded_image.png'
+        output_path = os.path.join(tempfile.gettempdir(), 'encoded_image.png')
         encoded_image.save(output_path, 'PNG')
 
         logger.info(f"Message encoded successfully in image: {output_path}")

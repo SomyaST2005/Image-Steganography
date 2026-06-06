@@ -1,0 +1,4 @@
+flask
+Pillow
+numpy
+gunicorn

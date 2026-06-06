@@ -11,7 +11,7 @@ import json
 
 # Initialize Flask app
 app = Flask(__name__)
-app.secret_key = 'your-secret-key-here'  # Change this in production
+app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-change-in-production')
 
 # Configure logging
 logging.basicConfig(
@@ -188,4 +188,6 @@ def not_found(e):
 
 if __name__ == '__main__':
     init_app()
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    debug = os.environ.get('FLASK_DEBUG', 'false').lower() == 'true'
+    app.run(host='0.0.0.0', port=port, debug=debug)
