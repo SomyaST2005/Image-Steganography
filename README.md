@@ -97,14 +97,74 @@ project-root/
 ---
 
 ## Evaluation Metrics
-1. **Mean Squared Error (MSE)**:
-   - Measures the average squared difference between the original and encoded images.
 
-2. **Peak Signal-to-Noise Ratio (PSNR)**:
-   - Evaluates the quality of the encoded image compared to the original image.
-These metrics ensure that the system maintains high image quality while embedding data.
+The system evaluates the quality of the encoded image by comparing the original cover image with the steganographic output image. The goal is to confirm that the hidden message is embedded while keeping visual distortion as low as possible.
+
+### Mean Squared Error (MSE)
+
+Mean Squared Error measures the average squared difference between pixel values of the original image and the encoded image.
+
+A lower MSE value means the encoded image is more similar to the original image.
+
+### Peak Signal-to-Noise Ratio (PSNR)
+
+Peak Signal-to-Noise Ratio measures the quality of the encoded image compared to the original image.
+
+A higher PSNR value means better image quality and lower visible distortion.
+
+### Benchmark Methodology
+
+The benchmark can be performed by encoding messages of different lengths into cover images of different sizes and then comparing the original and encoded images using MSE and PSNR.
+
+Example test setup:
+
+| Image Size | Message Length |
+| ---------- | -------------- |
+| 100 × 100  | Short message  |
+| 250 × 250  | Medium message |
+| 500 × 500  | Long message   |
 
 
+## Encoding Pipeline
+
+```text
+Plain Text Message
+        |
+        v
+Huffman Encoding
+        |
+        v
+Spread Spectrum Encoding
+        |
+        v
+LSB Embedding
+        |
+        v
+Encoded Steganographic Image
+
+### Benchmark Results
+
+| Image Size | Message Length | MSE | PSNR (dB) |
+| ---------- | -------------: | --: | --------: |
+| 100 × 100  |        2 chars | 0.0006 | 80.35 |
+| 100 × 100  |       17 chars | 0.001633 | 76.00 |
+| 100 × 100  |       43 chars | 0.003367 | 72.86 |
+| 100 × 100  |      500 chars | 0.0392 | 62.20 |
+| 250 × 250  |        2 chars | 0.000112 | 87.64 |
+| 250 × 250  |       17 chars | 0.000256 | 84.05 |
+| 250 × 250  |       43 chars | 0.000587 | 80.45 |
+| 250 × 250  |      500 chars | 0.005931 | 70.40 |
+| 500 × 500  |        2 chars | 0.000017 | 95.74 |
+| 500 × 500  |       17 chars | 0.000059 | 90.45 |
+| 500 × 500  |       43 chars | 0.000125 | 87.15 |
+| 500 × 500  |      500 chars | 0.001451 | 76.52 |
+
+**Average PSNR:** 80.32 dB  
+**Worst-case PSNR:** 62.20 dB
+
+### Key Observation
+
+The benchmark results show that the system preserves image quality effectively across different image sizes and message lengths. As expected, larger messages introduce more distortion, which increases MSE and lowers PSNR. However, even in the worst-case scenario, the PSNR remains above 62 dB, indicating that the visual quality of the encoded image is still very high. The average PSNR of 80.32 dB demonstrates that the steganographic process introduces minimal visible distortion overall.
 
 
 
