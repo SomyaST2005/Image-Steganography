@@ -1,108 +1,206 @@
-<!-- index.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Steganography Web App</title>
+    <title>StegShield — Image Steganography</title>
+    <meta name="description" content="Hide secret messages inside images using Huffman encoding, spread spectrum, and LSB steganography.">
+    <meta property="og:title" content="StegShield — Image Steganography">
+    <meta property="og:description" content="Hide secret messages inside images. Encode and decode with Huffman, spread spectrum, and LSB techniques.">
+    <meta name="theme-color" content="#0b1120">
+
+    <!-- Favicon: inline SVG shield -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="/static/styles.css">
-    <!-- Add Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <h1><i class="fas fa-shield-alt"></i> Image Steganography</h1>
-        
-        <!-- Tabs -->
-        <div class="tabs">
-            <button class="tab-btn active" data-tab="encode">Encode</button>
-            <button class="tab-btn" data-tab="decode">Decode</button>
-        </div>
+    <!-- Background gradient -->
+    <div class="bg-gradient"></div>
 
-        <!-- Encode Section -->
-        <section id="encoding-section" class="tab-content active">
-            <div class="card">
-                <h2><i class="fas fa-lock"></i> Encode Message</h2>
-                <form id="encode-form" enctype="multipart/form-data">
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-brand">
+                <svg class="header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    <path d="M12 8v4M12 16h.01"/>
+                </svg>
+                <div>
+                    <h1 class="header-title">StegShield</h1>
+                    <p class="header-tagline">Hide messages in plain sight</p>
+                </div>
+            </div>
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark mode">
+                <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+        </header>
+
+        <!-- How It Works (collapsible) -->
+        <details class="how-it-works">
+            <summary>How does this work?</summary>
+            <div class="how-it-works-content">
+                <div class="step">
+                    <span class="step-num">1</span>
+                    <div>
+                        <strong>Huffman Encoding</strong>
+                        <p>Your message is compressed using variable-length codes — frequent characters get shorter codes.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <span class="step-num">2</span>
+                    <div>
+                        <strong>Spread Spectrum</strong>
+                        <p>The binary stream is XORed with a pseudo-random sequence, spreading the signal for obfuscation.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <span class="step-num">3</span>
+                    <div>
+                        <strong>LSB Embedding</strong>
+                        <p>The result is hidden in the least significant bits of image pixels — invisible to the eye.</p>
+                    </div>
+                </div>
+            </div>
+        </details>
+
+        <!-- Tab Navigation -->
+        <nav class="tab-bar" role="tablist" aria-label="Encode or Decode">
+            <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="panel-encode" id="tab-encode" data-tab="encode">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Encode
+            </button>
+            <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-decode" id="tab-decode" data-tab="decode">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
+                Decode
+            </button>
+            <div class="tab-indicator"></div>
+        </nav>
+
+        <!-- Encode Panel -->
+        <section class="panel active" id="panel-encode" role="tabpanel" aria-labelledby="tab-encode">
+            <div class="glass-card">
+                <form id="encode-form" autocomplete="off">
+                    <!-- Drop Zone -->
                     <div class="form-group">
-                        <label for="image">
-                            <i class="fas fa-image"></i> Select Image:
-                        </label>
-                        <div class="file-input-container">
-                            <input type="file" id="image" name="image" accept="image/*" required>
-                            <div class="file-preview"></div>
+                        <label for="encode-image-input">Cover Image</label>
+                        <div class="dropzone" id="encode-dropzone" tabindex="0" role="button" aria-label="Upload cover image. Click or drag and drop.">
+                            <div class="dropzone-content">
+                                <svg class="dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                <p class="dropzone-text">Drag & drop image here, or <span class="dropzone-link">browse</span></p>
+                                <p class="dropzone-hint">PNG or JPEG — max 16 MB</p>
+                            </div>
+                            <input type="file" id="encode-image-input" name="image" accept="image/png,image/jpeg,image/jpg" hidden>
+                        </div>
+                        <div class="file-preview" id="encode-preview" hidden>
+                            <img id="encode-preview-img" alt="Selected cover image preview">
+                            <div class="file-info" id="encode-file-info"></div>
+                            <button type="button" class="remove-file" id="encode-remove-file" aria-label="Remove selected image">&times;</button>
                         </div>
                     </div>
 
+                    <!-- Capacity Indicator -->
+                    <div class="capacity-bar-wrap" id="encode-capacity" hidden>
+                        <div class="capacity-bar">
+                            <div class="capacity-fill" id="encode-capacity-fill"></div>
+                        </div>
+                        <span class="capacity-text" id="encode-capacity-text"></span>
+                    </div>
+
+                    <!-- Message -->
                     <div class="form-group">
-                        <label for="message">
-                            <i class="fas fa-envelope"></i> Message to Encode:
-                        </label>
-                        <textarea id="message" name="message" 
-                                placeholder="Enter your message here..." 
-                                required></textarea>
-                        <div class="character-count">
-                            Characters: <span id="char-count">0</span>
+                        <label for="message">Secret Message</label>
+                        <textarea id="message" name="message" maxlength="1000" placeholder="Type your secret message here..." rows="4" required></textarea>
+                        <div class="char-counter">
+                            <span id="char-count">0</span> / 1000
                         </div>
                     </div>
 
-                    <button type="submit" class="btn-primary">
-                        <i class="fas fa-lock"></i> Encode Message
+                    <!-- Submit -->
+                    <button type="submit" class="btn btn-encode" id="encode-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        <span>Encode Message</span>
                     </button>
                 </form>
 
-                <div id="download-link" class="result-section">
-                    <h3><i class="fas fa-download"></i> Download Encoded Image</h3>
-                    <a id="encoded-download" href="#" class="btn-secondary" download>
-                        Download Image
-                    </a>
-                </div>
+                <!-- Inline error -->
+                <div class="error-box" id="encode-error" hidden></div>
 
-                <div id="encoding-loader" class="loader">
-                    <div class="spinner"></div>
-                    <p>Encoding message...</p>
+                <!-- Success / Download -->
+                <div class="success-box" id="encode-success" hidden>
+                    <svg class="success-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    <p>Message encoded successfully!</p>
+                    <a id="encode-download" class="btn btn-download" download="encoded_image.png">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Download Encoded Image
+                    </a>
                 </div>
             </div>
         </section>
 
-        <!-- Decode Section -->
-        <section id="decoding-section" class="tab-content">
-            <div class="card">
-                <h2><i class="fas fa-unlock"></i> Decode Message</h2>
-                <form id="decode-form" enctype="multipart/form-data">
+        <!-- Decode Panel -->
+        <section class="panel" id="panel-decode" role="tabpanel" aria-labelledby="tab-decode" hidden>
+            <div class="glass-card">
+                <form id="decode-form" autocomplete="off">
+                    <!-- Drop Zone -->
                     <div class="form-group">
-                        <label for="decode-image">
-                            <i class="fas fa-image"></i> Select Encoded Image:
-                        </label>
-                        <div class="file-input-container">
-                            <input type="file" id="decode-image" name="decode-image" 
-                                   accept="image/*" required>
-                            <div class="file-preview"></div>
+                        <label for="decode-image-input">Encoded Image</label>
+                        <div class="dropzone" id="decode-dropzone" tabindex="0" role="button" aria-label="Upload encoded image. Click or drag and drop.">
+                            <div class="dropzone-content">
+                                <svg class="dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                <p class="dropzone-text">Drag & drop encoded image here, or <span class="dropzone-link">browse</span></p>
+                                <p class="dropzone-hint">Upload the image you previously encoded</p>
+                            </div>
+                            <input type="file" id="decode-image-input" name="image" accept="image/png" hidden>
+                        </div>
+                        <div class="file-preview" id="decode-preview" hidden>
+                            <img id="decode-preview-img" alt="Encoded image preview">
+                            <div class="file-info" id="decode-file-info"></div>
+                            <button type="button" class="remove-file" id="decode-remove-file" aria-label="Remove selected image">&times;</button>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn-primary">
-                        <i class="fas fa-unlock"></i> Decode Message
+                    <!-- Submit -->
+                    <button type="submit" class="btn btn-decode" id="decode-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
+                        <span>Decode Message</span>
                     </button>
                 </form>
 
-                <div id="decoded-message" class="result-section">
-                    <h3><i class="fas fa-envelope-open"></i> Decoded Message:</h3>
-                    <div class="message-box">
-                        <p id="message-output"></p>
-                        <button id="copy-message" class="btn-secondary">
-                            <i class="fas fa-copy"></i> Copy
+                <!-- Inline error -->
+                <div class="error-box" id="decode-error" hidden></div>
+
+                <!-- Decoded Message -->
+                <div class="success-box" id="decode-success" hidden>
+                    <svg class="success-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    <p>Message decoded!</p>
+                    <div class="decoded-message-box">
+                        <pre id="decoded-message-text"></pre>
+                        <button type="button" class="btn btn-copy" id="copy-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>Copy</span>
                         </button>
                     </div>
                 </div>
-
-                <div id="decoding-loader" class="loader">
-                    <div class="spinner"></div>
-                    <p>Decoding message...</p>
-                </div>
             </div>
         </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Built with Flask, Pillow & NumPy &mdash; Huffman + Spread Spectrum + LSB encoding pipeline</p>
+            <p class="footer-credit">Developed by Somya Shekhar Tiwari</p>
+        </footer>
     </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
     <script src="/static/scripts.js"></script>
 </body>
 </html>
